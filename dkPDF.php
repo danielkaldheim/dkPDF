@@ -149,7 +149,7 @@ class dkPDF extends fpdf\FPDF {
 			$x = $this->GetX();
 			$y = $this->GetY();
 			$w = array_sum($this->widths);
-			$this->Line($x, $y, $w, 1);
+			$this->Line($x, $y, ($x + $w), $y);
 		}
 		//Draw the cells of the row
 		for($i = 0; $i < count($data); $i++) {
@@ -173,7 +173,7 @@ class dkPDF extends fpdf\FPDF {
 			$x = $this->GetX();
 			$y = $this->GetY();
 			$w = array_sum($this->widths);
-			$this->Line($x, $y, $w, 1);
+			$this->Line($x, $y, ($x + $w), $y);
 		}
 		//Go to the next line
 		$this->Ln($h);

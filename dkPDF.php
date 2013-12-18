@@ -189,6 +189,8 @@ class dkPDF extends fpdf\FPDF {
 		$this->Row($data, $border, $fill, $border_top, $border_bottom);
 	}
 
+
+
 	function Row($data, $border = 0, $fill = false, $border_top = 0, $border_bottom = 0) {
 		//Calculate the height of the row
 		$nb = 0;
@@ -265,6 +267,18 @@ class dkPDF extends fpdf\FPDF {
 	function CheckPageBreak($h) {
 		//If the height h would cause an overflow, add a new page immediately
 		return $this->GetY() + $h > $this->PageBreakTrigger;
+	}
+
+	function calculateHeightTable($data) {
+		foreach ($data as $row) {
+			//Calculate the height of the row
+			$nb = 0;
+			for($i = 0; $i < count($row); $i++) {
+				$nb = max( $nb, $this->NbLines( $this->widths[$i], $row[$i]) );
+			}
+			$h += $nb;
+		}
+		return $h;
 	}
 
 	function NbLines($w,$txt) {

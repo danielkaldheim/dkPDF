@@ -9,10 +9,10 @@
  *	@version 1.0.0
  *
  */
+require('FPDF/src/fpdf/FPDF.php');
 
-require_once('FPDF/src/fpdf/FPDF.php');
 
-class dkPDF extends itbz\FPDF {
+class dkPDF extends FPDF {
 
 	var $custom_fonts = array();
 	var $produce;

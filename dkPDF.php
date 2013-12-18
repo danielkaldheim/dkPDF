@@ -19,6 +19,7 @@ class dkPDF extends fpdf\FPDF {
 	var $header_content = array();
 	var $widths;
 	var $aligns;
+	var $row_header = array();
 
 	function __construct($config = array('orientation' => 'P', 'unit' => 'mm', 'format' => 'A4')){
 		parent::__construct($config['orientation'],$config['unit'],$config['format']);
@@ -137,6 +138,53 @@ class dkPDF extends fpdf\FPDF {
 		$this->aligns=$a;
 	}
 
+	function RowHeader($data, $border = 0, $fill = false, $border_top = 0, $border_bottom = 0, $arguments = array()) {
+
+		if ($data === FALSE) {
+			$data = $this->row_header['data'];
+			$border = $this->row_header['border'];
+			$fill = $this->row_header['fill'];
+			$border_top = $this->row_header['border_top'];
+			$border_bottom = $this->row_header['border_bottom'];
+			$arguments = $this->row_header['arguments'];
+		}
+		else {
+			$this->row_header = array('data' => $data, 'border' => $border, 'fill' => $fill, 'border_top' => $border_top, 'border_bottom' => $border_bottom, 'arguments' => $arguments);
+		}
+
+		if (isset($arguments['textcolor'])) {
+			if (is_array($arguments['textcolor'])) {
+				$this->SetTextColor($arguments['textcolor']['r'], $arguments['textcolor']['g'], $arguments['textcolor']['b']);
+			}
+			else {
+				$this->SetTextColor($arguments['textcolor']);
+			}
+		}
+
+		if (isset($arguments['font'])) {
+			$this->SetFont($arguments['font']['family'], ((isset($arguments['font']['style']) ? $arguments['font']['style'] : '')), ((isset($arguments['font']['size']) ? $arguments['font']['size'] : 0)));
+		}
+
+		if (isset($arguments['fillcolor'])) {
+			if (is_array($arguments['fillcolor'])) {
+				$this->SetFillColor($arguments['fillcolor']['r'], $arguments['fillcolor']['g'], $arguments['fillcolor']['b']);
+			}
+			else {
+				$this->SetFillColor($arguments['fillcolor']);
+			}
+		}
+
+		if (isset($arguments['drawcolor'])) {
+			if (is_array($arguments['drawcolor'])) {
+				$this->SetDrawColor($arguments['drawcolor']['r'], $arguments['drawcolor']['g'], $arguments['drawcolor']['b']);
+			}
+			else {
+				$this->SetDrawColor($arguments['drawcolor']);
+			}
+		}
+		$this->Row($data, $border, $fill, $border_top, $border_bottom);
+	}
+
 	function Row($data, $border = 0, $fill = false, $border_top = 0, $border_bottom = 0) {
 		//Calculate the height of the row
 		$nb = 0;
@@ -144,7 +192,13 @@ class dkPDF extends fpdf\FPDF {
 			$nb = max( $nb, $this->NbLines( $this->widths[$i], $data[$i]) );
 		$h = 5 * $nb;
 		//Issue a page break first if needed
-		$this->CheckPageBreak($h);
+		if ($this->CheckPageBreak($h)) {
+			$this->AddPage($this->CurOrientation);
+			if ($this->row_header) {
+				$this->RowHeader(FALSE);
+			}
+		}
+
 		if ($border_top) {
 			$x = $this->GetX();
 			$y = $this->GetY();
@@ -183,9 +237,7 @@ class dkPDF extends fpdf\FPDF {
 
 	function CheckPageBreak($h) {
 		//If the height h would cause an overflow, add a new page immediately
-		if ($this->GetY() + $h > $this->PageBreakTrigger) {
-			$this->AddPage($this->CurOrientation);
-		}
+		return $this->GetY() + $h > $this->PageBreakTrigger;
 	}
 
 	function NbLines($w,$txt) {

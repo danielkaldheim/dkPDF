@@ -269,7 +269,7 @@ class dkPDF extends fpdf\FPDF {
 		return $this->GetY() + $h > $this->PageBreakTrigger;
 	}
 
-	function calculateHeightTable($data) {
+	function CalculateHeightTable($data) {
 		foreach ($data as $row) {
 			//Calculate the height of the row
 			$nb = 0;

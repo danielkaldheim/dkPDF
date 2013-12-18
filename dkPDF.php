@@ -10,7 +10,7 @@
  *
  */
 
-require_once('./FPDF/src/fpdf/FPDF.php');
+require_once('FPDF/src/fpdf/FPDF.php');
 
 class dkPDF extends FPDF {
 

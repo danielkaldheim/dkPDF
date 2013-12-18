@@ -149,7 +149,7 @@ class dkPDF extends fpdf\FPDF {
 			$x = $this->GetX();
 			$y = $this->GetY();
 			$w = array_sum($this->widths);
-			$this->Line($x, $y, ($x + $w), $y);
+			$this->Line($x, $y, $w, $y);
 		}
 		//Draw the cells of the row
 		for($i = 0; $i < count($data); $i++) {
@@ -169,14 +169,16 @@ class dkPDF extends fpdf\FPDF {
 			//Put the position to the right of the cell
 			$this->SetXY($x + $w, $y);
 		}
+
+		//Go to the next line
+		$this->Ln($h);
+
 		if ($border_bottom) {
 			$x = $this->GetX();
 			$y = $this->GetY();
 			$w = array_sum($this->widths);
-			$this->Line($x, $y, ($x + $w), $y);
+			$this->Line($x, $y, $w, $y);
 		}
-		//Go to the next line
-		$this->Ln($h);
 	}
 
 	function CheckPageBreak($h) {

@@ -195,7 +195,29 @@ class dkPDF extends fpdf\FPDF {
 		if ($this->CheckPageBreak($h)) {
 			$this->AddPage($this->CurOrientation);
 			if ($this->row_header) {
+				$FontFamily  = $this->FontFamily;
+				$FontStyle   = $this->FontStyle;
+				$underline   = $this->underline;
+				$CurrentFont = $this->CurrentFont;
+				$FontSizePt  = $this->FontSizePt;
+				$FontSize    = $this->FontSize;
+				$DrawColor   = $this->DrawColor;
+				$FillColor   = $this->FillColor;
+				$TextColor   = $this->TextColor;
+				$ColorFlag   = $this->ColorFlag;
+
 				$this->RowHeader(FALSE);
+
+				$this->FontFamily  = $FontFamily;
+				$this->FontStyle   = $FontStyle;
+				$this->underline   = $underline;
+				$this->CurrentFont = $CurrentFont;
+				$this->FontSizePt  = $FontSizePt;
+				$this->FontSize    = $FontSize;
+				$this->DrawColor   = $DrawColor;
+				$this->FillColor   = $FillColor;
+				$this->TextColor   = $TextColor;
+				$this->ColorFlag   = $ColorFlag;
 			}
 		}
 

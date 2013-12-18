@@ -153,8 +153,10 @@ class dkPDF extends fpdf\FPDF {
 			$x = $this->GetX();
 			$y = $this->GetY();
 
-			//Draw the border
-			$this->Rect($x, $y, $w, $h, (($border) ? 'D' : '').(($fill) ? 'F' : ''));
+			if ($border or $fill) {
+				//Draw the border
+				$this->Rect($x, $y, $w, $h, (($border) ? 'D' : '').(($fill) ? 'F' : ''));
+			}
 
 			//Print the text
 			$this->MultiCell($w, 5, $data[$i], 0, $a);

@@ -10,12 +10,12 @@
  *
  */
 
-require_once('FPDF/src/fpdf/FPDF.php');
+require_once('./FPDF/src/fpdf/FPDF.php');
 
 class dkPDF extends FPDF {
 
 	var $custom_fonts = array();
-	var $producer = 'Spotlist PDF v1.0 by iDrift Web AS';
+	var $produce;
 	var $header_content = array();
 	var $widths;
 	var $aligns;

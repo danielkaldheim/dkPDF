@@ -152,10 +152,14 @@ class dkPDF extends fpdf\FPDF {
 			//Save the current position
 			$x = $this->GetX();
 			$y = $this->GetY();
-			//Draw the border
-			$this->Rect($x, $y, $w, $h);
+
+			if ($border == 1) {
+				//Draw the border
+				$this->Rect($x, $y, $w, $h);
+			}
+
 			//Print the text
-			$this->MultiCell($w, 5, $data[$i], $border, $a);
+			$this->MultiCell($w, 5, $data[$i], 0, $a);
 			//Put the position to the right of the cell
 			$this->SetXY($x + $w, $y);
 		}

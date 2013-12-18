@@ -130,12 +130,12 @@ class dkPDF extends fpdf\FPDF {
 
 	function SetWidths($w) {
 		//Set the array of column widths
-		$this->widths=$w;
+		$this->widths = $w;
 	}
 
 	function SetAligns($a) {
 		//Set the array of column alignments
-		$this->aligns=$a;
+		$this->aligns = $a;
 	}
 
 	function RowHeader($data, $border = 0, $fill = false, $border_top = 0, $border_bottom = 0, $arguments = array()) {
@@ -182,6 +182,10 @@ class dkPDF extends fpdf\FPDF {
 				$this->SetDrawColor($arguments['drawcolor']);
 			}
 		}
+		if (isset($arguments['align'])) {
+			$this->SetAligns($arguments['align']);
+		}
+
 		$this->Row($data, $border, $fill, $border_top, $border_bottom);
 	}
 
@@ -195,6 +199,7 @@ class dkPDF extends fpdf\FPDF {
 		if ($this->CheckPageBreak($h)) {
 			$this->AddPage($this->CurOrientation);
 			if ($this->row_header) {
+				$aligns      = $this->aligns;
 				$FontFamily  = $this->FontFamily;
 				$FontStyle   = $this->FontStyle;
 				$underline   = $this->underline;
@@ -217,6 +222,7 @@ class dkPDF extends fpdf\FPDF {
 				$this->TextColor   = $TextColor;
 				$this->ColorFlag   = $ColorFlag;
 				$this->ws          = $ws;
+				$this->SetAligns($aligns);
 			}
 		}
 

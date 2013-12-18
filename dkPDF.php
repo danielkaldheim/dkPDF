@@ -209,7 +209,7 @@ class dkPDF extends fpdf\FPDF {
 
 				$this->RowHeader(FALSE);
 
-				$this->SetFont($FontFamily, $FontStyle, $FontSize);
+				$this->SetFont($FontFamily, $FontStyle, $FontSizePt);
 
 				$this->underline   = $underline;
 				$this->DrawColor   = $DrawColor;

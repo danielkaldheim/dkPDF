@@ -12,7 +12,7 @@
 
 require_once('FPDF/src/fpdf/FPDF.php');
 
-class dkPDF extends fpdf {
+class dkPDF extends itbz\FPDF {
 
 	var $custom_fonts = array();
 	var $produce;

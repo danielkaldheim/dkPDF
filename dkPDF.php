@@ -137,7 +137,7 @@ class dkPDF extends fpdf\FPDF {
 		$this->aligns=$a;
 	}
 
-	function Row($data, $border = 0, $fill = false) {
+	function Row($data, $border = 0, $fill = false, $border_top = 0, $border_bottom = 0) {
 		//Calculate the height of the row
 		$nb = 0;
 		for($i = 0; $i < count($data); $i++)
@@ -145,6 +145,12 @@ class dkPDF extends fpdf\FPDF {
 		$h = 5 * $nb;
 		//Issue a page break first if needed
 		$this->CheckPageBreak($h);
+		if ($border_top) {
+			$x = $this->GetX();
+			$y = $this->GetY();
+			$w = array_sum($this->widths);
+			$this->Line($x, $y, $w, 1);
+		}
 		//Draw the cells of the row
 		for($i = 0; $i < count($data); $i++) {
 			$w = $this->widths[$i];
@@ -153,7 +159,7 @@ class dkPDF extends fpdf\FPDF {
 			$x = $this->GetX();
 			$y = $this->GetY();
 
-			if ($border or $fill) {
+			if (($border && (!$border_top && !$border_bottom)) or $fill) {
 				//Draw the border
 				$this->Rect($x, $y, $w, $h, (($border) ? 'D' : '').(($fill) ? 'F' : ''));
 			}
@@ -162,6 +168,12 @@ class dkPDF extends fpdf\FPDF {
 			$this->MultiCell($w, 5, $data[$i], 0, $a);
 			//Put the position to the right of the cell
 			$this->SetXY($x + $w, $y);
+		}
+		if ($border_bottom) {
+			$x = $this->GetX();
+			$y = $this->GetY();
+			$w = array_sum($this->widths);
+			$this->Line($x, $y, $w, 1);
 		}
 		//Go to the next line
 		$this->Ln($h);

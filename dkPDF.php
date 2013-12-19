@@ -276,7 +276,7 @@ class dkPDF extends fpdf\FPDF {
 			for($i = 0; $i < count($row); $i++) {
 				$nb = max( $nb, $this->NbLines( $this->widths[$i], $row[$i]) );
 			}
-			$h += $nb;
+			$h += (5 * $nb);
 		}
 		return $h;
 	}

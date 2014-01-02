@@ -190,7 +190,7 @@ class dkPDF extends fpdf\FPDF {
 			}
 		}
 		if (isset($arguments['align'])) {
-			$this->SetAligns($arguments['align']);
+			$this->SetTableAligns($arguments['align']);
 		}
 
 		$this->Row($data, $border, $fill, $border_top, $border_bottom);
@@ -233,7 +233,7 @@ class dkPDF extends fpdf\FPDF {
 				$this->TextColor   = $TextColor;
 				$this->ColorFlag   = $ColorFlag;
 				$this->ws          = $ws;
-				$this->SetAligns($aligns);
+				$this->SetTableAligns($aligns);
 			}
 		}
 

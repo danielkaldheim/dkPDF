@@ -192,7 +192,9 @@ class dkPDF extends fpdf\FPDF {
 
 
 
-	function Row($data, $border = 0, $fill = false, $border_top = 0, $border_bottom = 0) {
+	function Row($data, $border = 0, $fill = false, $border_top = 0, $border_bottom = 0, $percent = false) {
+		//1% of full width if percent is used
+		$pc = ( $this->w-$this->rMargin-$this->x / 100);
 		//Calculate the height of the row
 		$nb = 0;
 		for($i = 0; $i < count($data); $i++)
@@ -233,11 +235,17 @@ class dkPDF extends fpdf\FPDF {
 			$x = $this->GetX();
 			$y = $this->GetY();
 			$w = array_sum($this->widths);
+			if ($percent) {
+				$w = ($w * $fw);
+			}
 			$this->Line(($x + 0.1), $y, (($x + $w) - 0.1), $y);
 		}
 		//Draw the cells of the row
 		for($i = 0; $i < count($data); $i++) {
 			$w = $this->widths[$i];
+			if ($percent) {
+				$w = ($w * $fw);
+			}
 			$a = isset($this->aligns[$i]) ? $this->aligns[$i] : 'L';
 			//Save the current position
 			$x = $this->GetX();
@@ -261,6 +269,9 @@ class dkPDF extends fpdf\FPDF {
 			$x = $this->GetX();
 			$y = $this->GetY();
 			$w = array_sum($this->widths);
+			if ($percent) {
+				$w = ($w * $fw);
+			}
 			$this->Line(($x + 0.1), $y, (($x + $w) - 0.1), $y);
 		}
 	}

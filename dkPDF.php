@@ -200,7 +200,7 @@ class dkPDF extends fpdf\FPDF {
 
 	function Row($data, $border = 0, $fill = false, $border_top = 0, $border_bottom = 0) {
 		//1% of full width if percent is used
-		$pc = ( $this->w-$this->rMargin-$this->x / 100);
+		$pc = ( ($this->w-$this->rMargin-$this->x) / 100);
 		//Calculate the height of the row
 		$nb = 0;
 		for($i = 0; $i < count($data); $i++)

@@ -18,8 +18,9 @@ class dkPDF extends fpdf\FPDF {
 	var $produce;
 	var $header_content = array();
 	var $footer_content = array();
-	var $widths;
-	var $aligns;
+	var $tablePercent = false;
+	var $tableWidths;
+	var $tableAligns;
 	var $row_header = array();
 
 	function __construct($config = array('orientation' => 'P', 'unit' => 'mm', 'format' => 'A4')){
@@ -129,14 +130,19 @@ class dkPDF extends fpdf\FPDF {
 	 *                 *
 	 *******************/
 
-	function SetWidths($w) {
+	function SetTableWidths($w) {
 		//Set the array of column widths
-		$this->widths = $w;
+		$this->tableWidths = $w;
 	}
 
-	function SetAligns($a) {
+
+	function SetTableAligns($a) {
 		//Set the array of column alignments
-		$this->aligns = $a;
+		$this->tableAligns = $a;
+	}
+
+	function SetTablePercent($percent = false) {
+		$this->tablePercent = $percent;
 	}
 
 	function RowHeader($data, $border = 0, $fill = false, $border_top = 0, $border_bottom = 0, $arguments = array()) {
@@ -192,19 +198,19 @@ class dkPDF extends fpdf\FPDF {
 
 
 
-	function Row($data, $border = 0, $fill = false, $border_top = 0, $border_bottom = 0, $percent = false) {
+	function Row($data, $border = 0, $fill = false, $border_top = 0, $border_bottom = 0) {
 		//1% of full width if percent is used
 		$pc = ( $this->w-$this->rMargin-$this->x / 100);
 		//Calculate the height of the row
 		$nb = 0;
 		for($i = 0; $i < count($data); $i++)
-			$nb = max( $nb, $this->NbLines( $this->widths[$i], $data[$i]) );
+			$nb = max( $nb, $this->NbLines( $this->tableWidths[$i], $data[$i]) );
 		$h = 5 * $nb;
 		//Issue a page break first if needed
 		if ($this->CheckPageBreak($h)) {
 			$this->AddPage($this->CurOrientation);
 			if ($this->row_header) {
-				$aligns      = $this->aligns;
+				$aligns      = $this->tableAligns;
 				$FontFamily  = $this->FontFamily;
 				$FontStyle   = $this->FontStyle;
 				$underline   = $this->underline;
@@ -234,19 +240,19 @@ class dkPDF extends fpdf\FPDF {
 		if ($border_top) {
 			$x = $this->GetX();
 			$y = $this->GetY();
-			$w = array_sum($this->widths);
-			if ($percent) {
+			$w = array_sum($this->tableWidths);
+			if ($this->tablePercent) {
 				$w = ($w * $fw);
 			}
 			$this->Line(($x + 0.1), $y, (($x + $w) - 0.1), $y);
 		}
 		//Draw the cells of the row
 		for($i = 0; $i < count($data); $i++) {
-			$w = $this->widths[$i];
-			if ($percent) {
+			$w = $this->tableWidths[$i];
+			if ($this->tablePercent) {
 				$w = ($w * $fw);
 			}
-			$a = isset($this->aligns[$i]) ? $this->aligns[$i] : 'L';
+			$a = isset($this->tableAligns[$i]) ? $this->tableAligns[$i] : 'L';
 			//Save the current position
 			$x = $this->GetX();
 			$y = $this->GetY();
@@ -268,8 +274,8 @@ class dkPDF extends fpdf\FPDF {
 		if ($border_bottom) {
 			$x = $this->GetX();
 			$y = $this->GetY();
-			$w = array_sum($this->widths);
-			if ($percent) {
+			$w = array_sum($this->tableWidths);
+			if ($this->tablePercent) {
 				$w = ($w * $fw);
 			}
 			$this->Line(($x + 0.1), $y, (($x + $w) - 0.1), $y);
@@ -286,7 +292,7 @@ class dkPDF extends fpdf\FPDF {
 			//Calculate the height of the row
 			$nb = 0;
 			for($i = 0; $i < count($row); $i++) {
-				$nb = max( $nb, $this->NbLines( $this->widths[$i], $row[$i]) );
+				$nb = max( $nb, $this->NbLines( $this->tableWidths[$i], $row[$i]) );
 			}
 			$h += (5 * $nb);
 		}
@@ -296,8 +302,14 @@ class dkPDF extends fpdf\FPDF {
 	function NbLines($w,$txt) {
 		//Computes the number of lines a MultiCell of width w will take
 		$cw = &$this->CurrentFont['cw'];
-		if ($w == 0)
+		if ($w == 0) {
 			$w = $this->w-$this->rMargin-$this->x;
+		}
+		else {
+			if ($this->tablePercent) {
+				$w = $w * (($this->w-$this->rMargin-$this->x) / 100);
+			}
+		}
 		$wmax = ($w - 2 * $this->cMargin) * 1000 / $this->FontSize;
 		$s = str_replace("\r",'',$txt);
 		$nb = strlen($s);

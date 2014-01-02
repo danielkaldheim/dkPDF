@@ -242,7 +242,7 @@ class dkPDF extends fpdf\FPDF {
 			$y = $this->GetY();
 			$w = array_sum($this->tableWidths);
 			if ($this->tablePercent) {
-				$w = ($w * $fw);
+				$w = ($w * $pc);
 			}
 			$this->Line(($x + 0.1), $y, (($x + $w) - 0.1), $y);
 		}
@@ -250,7 +250,7 @@ class dkPDF extends fpdf\FPDF {
 		for($i = 0; $i < count($data); $i++) {
 			$w = $this->tableWidths[$i];
 			if ($this->tablePercent) {
-				$w = ($w * $fw);
+				$w = ($w * $pc);
 			}
 			$a = isset($this->tableAligns[$i]) ? $this->tableAligns[$i] : 'L';
 			//Save the current position
@@ -276,7 +276,7 @@ class dkPDF extends fpdf\FPDF {
 			$y = $this->GetY();
 			$w = array_sum($this->tableWidths);
 			if ($this->tablePercent) {
-				$w = ($w * $fw);
+				$w = ($w * $pc);
 			}
 			$this->Line(($x + 0.1), $y, (($x + $w) - 0.1), $y);
 		}

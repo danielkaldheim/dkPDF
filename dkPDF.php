@@ -206,7 +206,7 @@ class dkPDF extends fpdf\FPDF {
 		for($i = 0; $i < count($data); $i++)
 			$nb = max( $nb, $this->NbLines( $this->tableWidths[$i], $data[$i]) );
 		$h = 5 * $nb;
-		//Issue a page break first if needed
+		/*//Issue a page break first if needed
 		if ($this->CheckPageBreak($h)) {
 			$this->AddPage($this->CurOrientation);
 			if ($this->row_header) {
@@ -235,7 +235,7 @@ class dkPDF extends fpdf\FPDF {
 				$this->ws          = $ws;
 				$this->SetTableAligns($aligns);
 			}
-		}
+		}*/
 
 		if ($border_top) {
 			$x = $this->GetX();

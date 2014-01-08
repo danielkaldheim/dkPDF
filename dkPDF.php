@@ -205,7 +205,7 @@ class dkPDF extends fpdf\FPDF {
 		$nb = 0;
 		for($i = 0; $i < count($data); $i++)
 			$nb = max( $nb, $this->NbLines( $this->tableWidths[$i], $data[$i]) );
-		$h = 5 * $nb;
+		$h = 4.5 * $nb;
 		//Issue a page break first if needed
 		if ($this->CheckPageBreak($h)) {
 			$this->AddPage($this->CurOrientation);

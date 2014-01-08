@@ -263,7 +263,7 @@ class dkPDF extends fpdf\FPDF {
 			}
 
 			//Print the text
-			$this->MultiCell($w, 5, $data[$i], 0, $a);
+			$this->MultiCell($w, 4.5, $data[$i], 0, $a);
 			//Put the position to the right of the cell
 			$this->SetXY($x + $w, $y);
 		}

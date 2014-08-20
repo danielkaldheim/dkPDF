@@ -10,5 +10,10 @@
             "email": "daniel@kaldheim.org"
         }
     ],
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "autoload": {
+        "files": [
+        "dkPDF.php"
+        ]
+    }
 }

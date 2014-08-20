@@ -9,16 +9,19 @@
  *	@version 1.0.0
  *
  */
-
 namespace crudus;
 
-class dkPDF extends \fpdf\FPDF {
+class dkPDF extends fpdf\FPDF {
+
 
 	var $custom_fonts = array();
 	var $produce;
 	var $header_content = array();
-	var $widths;
-	var $aligns;
+	var $footer_content = array();
+	var $tablePercent = false;
+	var $tableWidths;
+	var $tableAligns;
+	var $row_header = array();
 
 	function __construct($config = array('orientation' => 'P', 'unit' => 'mm', 'format' => 'A4')){
 		parent::__construct($config['orientation'],$config['unit'],$config['format']);
@@ -127,54 +130,186 @@ class dkPDF extends \fpdf\FPDF {
 	 *                 *
 	 *******************/
 
-	function SetWidths($w) {
+	function SetTableWidths($w) {
 		//Set the array of column widths
-		$this->widths=$w;
+		$this->tableWidths = $w;
 	}
 
-	function SetAligns($a) {
+
+	function SetTableAligns($a) {
 		//Set the array of column alignments
-		$this->aligns=$a;
+		$this->tableAligns = $a;
 	}
 
-	function Row($data) {
+	function SetTablePercent($percent = false) {
+		$this->tablePercent = $percent;
+	}
+
+	function RowHeader($data, $border = 0, $fill = false, $border_top = 0, $border_bottom = 0, $arguments = array()) {
+
+		if ($data === FALSE) {
+			$data = $this->row_header['data'];
+			$border = $this->row_header['border'];
+			$fill = $this->row_header['fill'];
+			$border_top = $this->row_header['border_top'];
+			$border_bottom = $this->row_header['border_bottom'];
+			$arguments = $this->row_header['arguments'];
+		}
+		else {
+			$this->row_header = array('data' => $data, 'border' => $border, 'fill' => $fill, 'border_top' => $border_top, 'border_bottom' => $border_bottom, 'arguments' => $arguments);
+		}
+
+		if (isset($arguments['textcolor'])) {
+			if (is_array($arguments['textcolor'])) {
+				$this->SetTextColor($arguments['textcolor']['r'], $arguments['textcolor']['g'], $arguments['textcolor']['b']);
+			}
+			else {
+				$this->SetTextColor($arguments['textcolor']);
+			}
+		}
+
+		if (isset($arguments['font'])) {
+			$this->SetFont($arguments['font']['family'], ((isset($arguments['font']['style']) ? $arguments['font']['style'] : '')), ((isset($arguments['font']['size']) ? $arguments['font']['size'] : 0)));
+		}
+
+		if (isset($arguments['fillcolor'])) {
+			if (is_array($arguments['fillcolor'])) {
+				$this->SetFillColor($arguments['fillcolor']['r'], $arguments['fillcolor']['g'], $arguments['fillcolor']['b']);
+			}
+			else {
+				$this->SetFillColor($arguments['fillcolor']);
+			}
+		}
+
+		if (isset($arguments['drawcolor'])) {
+			if (is_array($arguments['drawcolor'])) {
+				$this->SetDrawColor($arguments['drawcolor']['r'], $arguments['drawcolor']['g'], $arguments['drawcolor']['b']);
+			}
+			else {
+				$this->SetDrawColor($arguments['drawcolor']);
+			}
+		}
+		if (isset($arguments['align'])) {
+			$this->SetTableAligns($arguments['align']);
+		}
+
+		$this->Row($data, $border, $fill, $border_top, $border_bottom);
+	}
+
+
+
+	function Row($data, $border = 0, $fill = false, $border_top = 0, $border_bottom = 0) {
+		//1% of full width if percent is used
+		$pc = ( ($this->w-$this->rMargin-$this->x) / 100);
 		//Calculate the height of the row
 		$nb = 0;
 		for($i = 0; $i < count($data); $i++)
-			$nb = max( $nb, $this->NbLines( $this->widths[$i], $data[$i]) );
-		$h = 5 * $nb;
+			$nb = max( $nb, $this->NbLines( $this->tableWidths[$i], $data[$i]) );
+		$h = 4.5 * $nb;
 		//Issue a page break first if needed
-		$this->CheckPageBreak($h);
+		if ($this->CheckPageBreak($h)) {
+			$this->AddPage($this->CurOrientation);
+			if ($this->row_header) {
+				$aligns      = $this->tableAligns;
+				$FontFamily  = $this->FontFamily;
+				$FontStyle   = $this->FontStyle;
+				$underline   = $this->underline;
+				$CurrentFont = $this->CurrentFont;
+				$FontSizePt  = $this->FontSizePt;
+				$FontSize    = $this->FontSize;
+				$DrawColor   = $this->DrawColor;
+				$FillColor   = $this->FillColor;
+				$TextColor   = $this->TextColor;
+				$ColorFlag   = $this->ColorFlag;
+				$ws          = $this->ws;
+
+				$this->RowHeader(FALSE);
+
+				$this->SetFont($FontFamily, $FontStyle, $FontSizePt);
+
+				$this->underline   = $underline;
+				$this->DrawColor   = $DrawColor;
+				$this->FillColor   = $FillColor;
+				$this->TextColor   = $TextColor;
+				$this->ColorFlag   = $ColorFlag;
+				$this->ws          = $ws;
+				$this->SetTableAligns($aligns);
+			}
+		}
+
+		if ($border_top) {
+			$x = $this->GetX();
+			$y = $this->GetY();
+			$w = array_sum($this->tableWidths);
+			if ($this->tablePercent) {
+				$w = ($w * $pc);
+			}
+			$this->Line(($x + 0.1), $y, (($x + $w) - 0.1), $y);
+		}
 		//Draw the cells of the row
-		for($i=0; $i < count($data); $i++) {
-			$w = $this->widths[$i];
-			$a = isset($this->aligns[$i]) ? $this->aligns[$i] : 'L';
+		for($i = 0; $i < count($data); $i++) {
+			$w = $this->tableWidths[$i];
+			if ($this->tablePercent) {
+				$w = ($w * $pc);
+			}
+			$a = isset($this->tableAligns[$i]) ? $this->tableAligns[$i] : 'L';
 			//Save the current position
 			$x = $this->GetX();
 			$y = $this->GetY();
-			//Draw the border
-			$this->Rect($x, $y, $w, $h);
+
+			if (($border && (!$border_top && !$border_bottom)) or $fill) {
+				//Draw the border
+				$this->Rect($x, $y, $w, $h, (($border) ? 'D' : '').(($fill) ? 'F' : ''));
+			}
+
 			//Print the text
-			$this->MultiCell($w, 5, $data[$i], 0, $a);
+			$this->MultiCell($w, 4.5, $data[$i], 0, $a);
 			//Put the position to the right of the cell
 			$this->SetXY($x + $w, $y);
 		}
+
 		//Go to the next line
 		$this->Ln($h);
+
+		if ($border_bottom) {
+			$x = $this->GetX();
+			$y = $this->GetY();
+			$w = array_sum($this->tableWidths);
+			if ($this->tablePercent) {
+				$w = ($w * $pc);
+			}
+			$this->Line(($x + 0.1), $y, (($x + $w) - 0.1), $y);
+		}
 	}
 
 	function CheckPageBreak($h) {
 		//If the height h would cause an overflow, add a new page immediately
-		if ($this->GetY() + $h > $this->PageBreakTrigger) {
-			$this->AddPage($this->CurOrientation);
+		return $this->GetY() + $h > $this->PageBreakTrigger;
+	}
+
+	function CalculateHeightTable($data) {
+		foreach ($data as $row) {
+			//Calculate the height of the row
+			$nb = 0;
+			for($i = 0; $i < count($row); $i++) {
+				$nb = max( $nb, $this->NbLines( $this->tableWidths[$i], $row[$i]) );
+			}
+			$h += (5 * $nb);
 		}
+		return $h;
 	}
 
 	function NbLines($w,$txt) {
 		//Computes the number of lines a MultiCell of width w will take
 		$cw = &$this->CurrentFont['cw'];
-		if ($w == 0)
+		if ($w == 0) {
 			$w = $this->w-$this->rMargin-$this->x;
+		}
+		else {
+			if ($this->tablePercent) {
+				$w = $w * (($this->w-$this->rMargin-$this->x) / 100);
+			}
+		}
 		$wmax = ($w - 2 * $this->cMargin) * 1000 / $this->FontSize;
 		$s = str_replace("\r",'',$txt);
 		$nb = strlen($s);

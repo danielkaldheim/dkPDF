@@ -10,9 +10,9 @@
  *
  */
 
-require_once('FPDF/src/fpdf/FPDF.php');
+namespace crudus;
 
-class dkPDF extends FPDF {
+class dkPDF extends \fpdf\FPDF {
 
 	var $custom_fonts = array();
 	var $produce;

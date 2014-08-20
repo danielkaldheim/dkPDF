@@ -1,0 +1,14 @@
+{
+    "name": "crudus/dkpdf",
+    "description": "An extension of FPDF",
+    "require": {
+        "itbz/fpdf": "dev-master"
+    },
+    "authors": [
+        {
+            "name": "Daniel Rufus Kaldheim",
+            "email": "daniel@kaldheim.org"
+        }
+    ],
+    "minimum-stability": "dev"
+}

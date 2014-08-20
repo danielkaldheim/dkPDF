@@ -1,3 +1,0 @@
-[submodule "FPDF"]
-	path = FPDF
-	url = https://github.com/iio/fpdf.git

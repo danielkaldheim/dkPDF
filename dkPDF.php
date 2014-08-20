@@ -11,7 +11,7 @@
  */
 namespace crudus;
 
-class dkPDF extends fpdf\FPDF {
+class dkPDF extends \fpdf\FPDF {
 
 
 	var $custom_fonts = array();

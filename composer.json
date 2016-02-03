@@ -2,7 +2,7 @@
     "name": "crudus/dkpdf",
     "description": "An extension of FPDF",
     "require": {
-        "itbz/fpdf": "dev-master"
+        "itbz/fpdf": "^1.7"
     },
     "authors": [
         {

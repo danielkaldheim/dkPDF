@@ -15,7 +15,7 @@ class dkPDF extends \fpdf\FPDF {
 
 
 	var $custom_fonts = array();
-	var $produce;
+	var $producer;
 	var $header_content = array();
 	var $footer_content = array();
 	var $tablePercent = false;
